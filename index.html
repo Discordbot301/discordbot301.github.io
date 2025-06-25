@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Bot Command Panel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+  body {
+    background-color: #121212;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 20px;
+    color: #fff;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+  }
+
+  button {
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #4caf50;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  button:hover {
+    background-color: #388e3c;
+  }
+
+  #message {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #333;
+    border-radius: 8px;
+    min-height: 50px;
+    white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+
+<h1>My Bot Command Panel</h1>
+
+<div class="grid">
+  <button onclick="sendCommand('app')">App</button>
+  <button onclick="sendCommand('ban')">Ban</button>
+  <button onclick="sendCommand('botinfo')">Bot Info</button>
+  <button onclick="sendCommand('chat')">Chat</button>
+  <button onclick="sendCommand('clear')">Clear Messages</button>
+  <button onclick="sendCommand('endchat')">End Chat</button>
+  <button onclick="sendCommand('help')">Help</button>
+  <button onclick="sendCommand('invite')">Invite</button>
+  <button onclick="sendCommand('kick')">Kick</button>
+  <button onclick="sendCommand('mute')">Mute</button>
+  <button onclick="sendCommand('ping')">Ping</button>
+  <button onclick="sendCommand('serverinfo')">Server Info</button>
+  <button onclick="sendCommand('unmute')">Unmute</button>
+  <button onclick="sendCommand('userinfo')">User Info</button>
+  <button onclick="sendCommand('noodleadmin')">Noodle Admin</button>
+</div>
+
+<div id="message"></div>
+
+<script>
+  const MY_USER_ID = "1319868131400876127";
+
+  async function sendCommand(cmd) {
+    // For all commands except noodleadmin, verify user ID
+    if (cmd !== 'noodleadmin') {
+      const enteredUserId = prompt("Enter your User ID:");
+      if (enteredUserId !== MY_USER_ID) {
+        alert("You are not authorized to use this command.");
+        return; // Cancel if not authorized
+      }
+    }
+    // For all commands, ask for optional user ID input
+    let userIdInput = prompt("Enter User ID if required (or leave blank):");
+    let payload = { userId: userIdInput || "" };
+
+    const apiUrl = `https://braddockjaxson9.replit.co/api/${cmd}`;
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      document.getElementById('message').innerText = data.message;
+    } catch (err) {
+      document.getElementById('message').innerText = 'Error: ' + err.message;
+    }
+  }
+</script>
+
+</body>
+</html>
